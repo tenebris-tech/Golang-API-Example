@@ -32,22 +32,25 @@ func (w *statusWriter) Write(b []byte) (int, error) {
 	return n, err
 }
 
-// Logger implements a custom logger
+// Logger implements a custom logger by wrapping the handler
 func Logger(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+
+		// Get the start time and source IP
+		startTime := time.Now()
+		src := getIP(r)
+
+		// Service the request
 		sw := statusWriter{ResponseWriter: w}
 		inner.ServeHTTP(&sw, r)
-		src := getIP(r)
+
+		// Get duration of request
+		duration := time.Since(startTime)
 
 		// Remove parameters from URI to avoid logging confidential information
 		uri := strings.Split(r.RequestURI, "?")[0]
 
-		// Don't log health checks to reduce log noise
-		if name != "health" {
-
-			// Add code here to send the log event somewhere other than stdout
-			fmt.Printf("%s %s %d %d\n", src, uri, sw.status, time.Since(start))
-		}
+		// Add code here to send the log event somewhere other than stdout
+		fmt.Printf("%s %s %s %d %f\n", src, r.Method, uri, sw.status, duration.Seconds())
 	})
 }

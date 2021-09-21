@@ -67,6 +67,10 @@ func main() {
 	// Instantiate HTTP router
 	router := newRouter()
 
+	// Add catch all and not found handler
+	router.PathPrefix("/").Handler(Logger(http.HandlerFunc(Handler404), "404"))
+	router.NotFoundHandler = Logger(http.HandlerFunc(Handler404), "404")
+
 	// Create server
 	s := &http.Server{
 		Addr:              ":" + listenPort,
