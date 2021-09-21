@@ -33,6 +33,7 @@ func (w *statusWriter) Write(b []byte) (int, error) {
 }
 
 // Logger implements a custom logger by wrapping the handler
+//goland:noinspection ALL
 func Logger(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 

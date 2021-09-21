@@ -18,6 +18,7 @@ type HealthResponse struct {
 }
 
 // HealthHandler implements a health check for load balancers, etc.
+//goland:noinspection GoUnusedParameter
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	var resp HealthResponse
 

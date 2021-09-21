@@ -17,6 +17,7 @@ type Response404 struct {
 }
 
 // Handler404 accepts an 'id' variable and echos it back
+//goland:noinspection GoUnusedParameter
 func Handler404(w http.ResponseWriter, r *http.Request) {
 	var resp Response404
 
