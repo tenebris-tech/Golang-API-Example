@@ -124,10 +124,12 @@ func listen(srv *http.Server, maxConcurrent int) error {
 	}
 
 	if maxConcurrent == 0 {
+		// Note - for TLS see ServeTLS
 		return srv.Serve(listener)
 	}
 
 	limited := netutil.LimitListener(listener, maxConcurrent)
+	// Note - for TLS see ServeTLS
 	return srv.Serve(limited)
 }
 
