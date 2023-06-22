@@ -41,16 +41,16 @@ func main() {
 	a.HTTPIdleTimeout = 60
 	a.MaxConcurrent = 100
 	a.DownFile = string(os.PathSeparator) + "down.txt"
-	a.TLS = false
-	a.TLSCertFile = ""
-	a.TLSKeyFile = ""
+	a.TLS = true
+	a.TLSCertFile = "cert.pem"
+	a.TLSKeyFile = "key.pem"
 
 	// Start the API
 	// If the application needs to do other work, Start() could be launched as a goroutine
-	fmt.Printf("%s %s starting HTTP server on port %d\n", ProductName, ProductVersion, a.ListenPort)
+	fmt.Printf("%s %s starting API server on port %d\n", ProductName, ProductVersion, a.ListenPort)
 	err := a.Start()
 	if err != nil {
-		fmt.Println("Error starting HTTP server: " + err.Error())
+		fmt.Println("Error starting API server: " + err.Error())
 	}
 }
 
@@ -58,7 +58,7 @@ func main() {
 func AppCleanup() {
 
 	// Log exit
-	fmt.Println("HTTP server stopping")
+	fmt.Println("API server stopping")
 
 	// Exit
 	os.Exit(0)

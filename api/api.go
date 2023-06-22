@@ -6,6 +6,7 @@
 package api
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/http"
@@ -71,6 +72,27 @@ func (c *Config) Start() error {
 		ReadTimeout:       time.Duration(c.HTTPTimeout) * time.Second,
 		WriteTimeout:      time.Duration(c.HTTPTimeout) * time.Second,
 		IdleTimeout:       time.Duration(c.HTTPIdleTimeout) * time.Second,
+	}
+
+	// Add TLS configuration if option is enabled
+	if c.TLS {
+
+		if c.TLSCertFile == "" || c.TLSKeyFile == "" {
+			return errors.New("TLS cert or key file not specified")
+		}
+
+		// Load the cert and key
+		cert, err := tls.LoadX509KeyPair(c.TLSCertFile, c.TLSKeyFile)
+		if err != nil {
+			return err
+		}
+
+		// Create the TLS configuration
+		tlsConfig := tls.Config{Certificates: []tls.Certificate{cert}}
+		tlsConfig.MinVersion = tls.VersionTLS12
+
+		// Add to the HTTP server config
+		s.TLSConfig = &tlsConfig
 	}
 
 	// Start our customized server

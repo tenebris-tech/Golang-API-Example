@@ -36,7 +36,8 @@ func (c *Config) listen(srv *http.Server) error {
 // Start server
 func (c *Config) serve(srv *http.Server, l net.Listener) error {
 	if c.TLS {
-		return srv.ServeTLS(l, c.TLSCertFile, c.TLSKeyFile)
+		// This will use the previously configured TLS information
+		return srv.ServeTLS(l, "", "")
 	} else {
 		return srv.Serve(l)
 	}
