@@ -12,8 +12,8 @@ import (
 )
 
 // Replacement for ListenAndServe that implements concurrent session limit
-// using netutil.LimitListener. If maxConcurrent is 0, bypass limit.
-func listen(srv *http.Server, maxConcurrent int) error {
+// using netutil.LimitListener. If maxConcurrent is 0, bypass the limit.
+func (c *Config) listen(srv *http.Server) error {
 
 	addr := srv.Addr
 	if addr == "" {
@@ -25,12 +25,19 @@ func listen(srv *http.Server, maxConcurrent int) error {
 		return err
 	}
 
-	if maxConcurrent == 0 {
-		// Note - for TLS see ServeTLS
-		return srv.Serve(listener)
+	if c.MaxConcurrent == 0 {
+		return c.serve(srv, listener)
 	}
 
-	limited := netutil.LimitListener(listener, maxConcurrent)
-	// Note - for TLS see ServeTLS
-	return srv.Serve(limited)
+	limited := netutil.LimitListener(listener, c.MaxConcurrent)
+	return c.serve(srv, limited)
+}
+
+// Start server
+func (c *Config) serve(srv *http.Server, l net.Listener) error {
+	if c.TLS {
+		return srv.ServeTLS(l, c.TLSCertFile, c.TLSKeyFile)
+	} else {
+		return srv.Serve(l)
+	}
 }

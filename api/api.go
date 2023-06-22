@@ -20,6 +20,9 @@ type Config struct {
 	MaxConcurrent   int
 	DownFile        string
 	StrictSlash     bool
+	TLS             bool
+	TLSCertFile     string
+	TLSKeyFile      string
 }
 
 // Store the down file in a global variable
@@ -35,6 +38,9 @@ func New() Config {
 		MaxConcurrent:   100,
 		DownFile:        "",
 		StrictSlash:     true,
+		TLS:             false,
+		TLSCertFile:     "",
+		TLSKeyFile:      "",
 	}
 }
 
@@ -68,7 +74,7 @@ func (c *Config) Start() error {
 	}
 
 	// Start our customized server
-	err := listen(s, c.MaxConcurrent)
+	err := c.listen(s)
 	if err != nil {
 		return err
 	}

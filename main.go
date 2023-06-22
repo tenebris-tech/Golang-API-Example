@@ -41,6 +41,9 @@ func main() {
 	a.HTTPIdleTimeout = 60
 	a.MaxConcurrent = 100
 	a.DownFile = string(os.PathSeparator) + "down.txt"
+	a.TLS = false
+	a.TLSCertFile = ""
+	a.TLSKeyFile = ""
 
 	// Start the API
 	// If the application needs to do other work, Start() could be launched as a goroutine
