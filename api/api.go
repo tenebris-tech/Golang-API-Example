@@ -25,6 +25,7 @@ type Config struct {
 // Store the down file in a global variable
 var downFile = ""
 
+// New returns a new Config struct with default values
 func New() Config {
 	// Return default configuration
 	return Config{
@@ -37,14 +38,13 @@ func New() Config {
 	}
 }
 
+// Start starts the API
 func (c *Config) Start() error {
 
 	// Update the downFile for access by the handler
-	// This will create an issue if more than one API is initialized, they can not
-	// have separate down files
 	downFile = c.DownFile
 
-	// Instantiate HTTP router
+	// Instantiate the HTTP router
 	router := c.newRouter()
 
 	// Add catch all and not found handler

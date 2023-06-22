@@ -34,6 +34,7 @@ func main() {
 		}
 	}()
 
+	// Create the API object and set parameters
 	a := api.New()
 	a.ListenPort = 8080
 	a.HTTPTimeout = 30
@@ -41,6 +42,8 @@ func main() {
 	a.MaxConcurrent = 100
 	a.DownFile = string(os.PathSeparator) + "down.txt"
 
+	// Start the API
+	// If the application needs to do other work, Start() could be launched as a goroutine
 	fmt.Printf("%s %s starting HTTP server on port %d\n", ProductName, ProductVersion, a.ListenPort)
 	err := a.Start()
 	if err != nil {
