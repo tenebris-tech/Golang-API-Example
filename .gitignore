@@ -4,6 +4,9 @@
 *.dll
 *.so
 *.dylib
+api-example
+cert.*
+key.*
 
 # Test binary, build with `go test -c`
 *.test
@@ -13,4 +16,3 @@
 
 # IDE
 .idea
-api

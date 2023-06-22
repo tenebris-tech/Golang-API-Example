@@ -1,29 +1,30 @@
 //
-// Copyright (c) 2021 Tenebris Technologies Inc.
+// Copyright (c) 2021-2023 Tenebris Technologies Inc.
 // See LICENSE for further information.
 //
 
-package main
+package api
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-type Response404 struct {
-	Status string `json:"status"`
-	Code   int    `json:"code"`
-}
+// ExampleHandler accepts an 'id' variable and echos it back
+func ExampleHandler(w http.ResponseWriter, r *http.Request) {
+	var resp Response
 
-// Handler404 accepts an 'id' variable and echos it back
-//goland:noinspection GoUnusedParameter
-func Handler404(w http.ResponseWriter, r *http.Request) {
-	var resp Response404
+	// Get parameter
+	vars := mux.Vars(r)
+	id := vars["id"]
 
-	// Create error response
+	// Create example response
 	resp.Status = "ok"
 	resp.Code = 200
+	resp.Details = fmt.Sprintf("received ID %s", id)
 
 	// Set reply header
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
