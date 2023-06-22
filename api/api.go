@@ -48,8 +48,8 @@ func (c *Config) Start() error {
 	router := c.newRouter()
 
 	// Add catch all and not found handler
-	router.PathPrefix("/").Handler(Logger(http.HandlerFunc(Handler404), "404"))
-	router.NotFoundHandler = Logger(http.HandlerFunc(Handler404), "404")
+	router.PathPrefix("/").Handler(Logger(http.HandlerFunc(Handler404)))
+	router.NotFoundHandler = Logger(http.HandlerFunc(Handler404))
 
 	// Validate port
 	if c.ListenPort < 1 || c.ListenPort > 65535 {
