@@ -1,14 +1,14 @@
 # Golang API Example
 
-Copyright (c) 2021 Tenebris Technologies Inc.
+Copyright (c) 2021-2023 Tenebris Technologies Inc.
 
 See the LICENSE file for further information.
 
-This is an example of how to implement a production quality HTTP server in Golang using github.com/gorilla/mux and how
-to limit the number of concurrent requests.
+This is an example of how to implement a production HTTP server in Golang using github.com/gorilla/mux 
+and limit the number of concurrent requests.
 
 A log wrapper example is also included. It currently writes logs to stdout using fmt.Printf, but can be updated to send
-log events to another destination (see logger.go).
+log events to another destination (see api/logger.go).
 
 HTTP routes are defined in routes.go.
 
