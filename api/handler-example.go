@@ -6,14 +6,15 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-// ExampleHandler accepts an 'id' variable and echos it back
+// ExampleHandler accepts an optional 'id' variable and echos it back
+// This is an example of a handler that can receive a variable in the URL or not
+// Note that two routes are defined in routes.go, one with the variable and one without
 func ExampleHandler(w http.ResponseWriter, r *http.Request) {
 	var resp Response
 
@@ -23,15 +24,14 @@ func ExampleHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create example response
 	resp.Status = "ok"
-	resp.Code = 200
-	resp.Details = fmt.Sprintf("received ID %s", id)
-
-	// Set reply header
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-	// Send reply
-	w.WriteHeader(resp.Code)
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		fmt.Printf("JSON encode error in ExampleHandler: %s\n", err.Error())
+	resp.Code = http.StatusOK
+  
+	if id == "" {
+		resp.Details = "no ID received"
+	} else {
+		resp.Details = fmt.Sprintf("received ID %s", id)
 	}
+
+	// Send Response
+	respond(w, resp, "example")
 }

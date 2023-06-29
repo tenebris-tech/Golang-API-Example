@@ -8,14 +8,12 @@ package api
 import (
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 )
 
 type Config struct {
-	ListenPort      int
+	Listen          string
 	HTTPTimeout     int
 	HTTPIdleTimeout int
 	MaxConcurrent   int
@@ -33,7 +31,7 @@ var downFile = ""
 func New() Config {
 	// Return default configuration
 	return Config{
-		ListenPort:      80,
+		Listen:          "127.0.0.1:8080",
 		HTTPTimeout:     60,
 		HTTPIdleTimeout: 60,
 		MaxConcurrent:   100,
@@ -58,15 +56,9 @@ func (c *Config) Start() error {
 	router.PathPrefix("/").Handler(Logger(http.HandlerFunc(Handler404)))
 	router.NotFoundHandler = Logger(http.HandlerFunc(Handler404))
 
-	// Validate port
-	if c.ListenPort < 1 || c.ListenPort > 65535 {
-		return errors.New(fmt.Sprintf("invalid ListenPort: %d\n", c.ListenPort))
-	}
-	listenPort := strconv.Itoa(c.ListenPort)
-
 	// Create server
 	s := &http.Server{
-		Addr:              ":" + listenPort,
+		Addr:              c.Listen,
 		Handler:           router,
 		ReadHeaderTimeout: time.Duration(c.HTTPTimeout) * time.Second,
 		ReadTimeout:       time.Duration(c.HTTPTimeout) * time.Second,
