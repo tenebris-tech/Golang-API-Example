@@ -15,7 +15,7 @@ import (
 )
 
 const ProductName = "golang-api-example"
-const ProductVersion = "0.0.2"
+const ProductVersion = "0.0.3"
 
 func main() {
 
@@ -36,18 +36,18 @@ func main() {
 
 	// Create the API object and set parameters
 	a := api.New()
-	a.ListenPort = 8080
+	a.Listen = "127.0.0.1:8080"
 	a.HTTPTimeout = 30
 	a.HTTPIdleTimeout = 60
 	a.MaxConcurrent = 100
 	a.DownFile = string(os.PathSeparator) + "down.txt"
-	a.TLS = true
+	a.TLS = false
 	a.TLSCertFile = "cert.pem"
 	a.TLSKeyFile = "key.pem"
 
 	// Start the API
 	// If the application needs to do other work, Start() could be launched as a goroutine
-	fmt.Printf("%s %s starting API server on port %d\n", ProductName, ProductVersion, a.ListenPort)
+	fmt.Printf("%s %s starting API server on %s\n", ProductName, ProductVersion, a.Listen)
 	err := a.Start()
 	if err != nil {
 		fmt.Println("Error starting API server: " + err.Error())

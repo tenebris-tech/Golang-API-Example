@@ -26,6 +26,12 @@ var routes = Routes{
 	Route{
 		"ip",
 		"GET",
+		"/example",
+		ExampleHandler,
+	},
+	Route{
+		"ip",
+		"GET",
 		"/example/{id}",
 		ExampleHandler,
 	},

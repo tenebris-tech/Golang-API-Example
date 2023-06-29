@@ -6,27 +6,20 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
-// Handler404 accepts an 'id' variable and echos it back
+// Handler404 returns a 404 error
 //
 //goland:noinspection GoUnusedParameter
 func Handler404(w http.ResponseWriter, r *http.Request) {
 	var resp Response
 
 	// Create error response
-	resp.Status = "ok"
-	resp.Code = 200
+	resp.Status = "error"
+	resp.Code = http.StatusNotFound
+	resp.Details = "object does not exist"
 
-	// Set reply header
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-	// Send reply
-	w.WriteHeader(resp.Code)
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		fmt.Printf("JSON encode error in ExampleHandler: %s\n", err.Error())
-	}
+	// Send Response
+	respond(w, resp, "404")
 }
