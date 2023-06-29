@@ -36,18 +36,20 @@ func main() {
 
 	// Create the API object and set parameters
 	a := api.New()
+
 	a.Listen = "127.0.0.1:8080"
 	a.HTTPTimeout = 30
 	a.HTTPIdleTimeout = 60
 	a.MaxConcurrent = 100
 	a.DownFile = string(os.PathSeparator) + "down.txt"
-	a.TLS = false
+	a.TLS = false // disabled
 	a.TLSCertFile = "cert.pem"
 	a.TLSKeyFile = "key.pem"
 
-	// Start the API
-	// If the application needs to do other work, Start() could be launched as a goroutine
 	fmt.Printf("%s %s starting API server on %s\n", ProductName, ProductVersion, a.Listen)
+
+ 	// Start the API
+	// If the application needs to do other work, Start() could be launched as a goroutine
 	err := a.Start()
 	if err != nil {
 		fmt.Println("Error starting API server: " + err.Error())

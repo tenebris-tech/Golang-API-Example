@@ -25,6 +25,7 @@ func ExampleHandler(w http.ResponseWriter, r *http.Request) {
 	// Create example response
 	resp.Status = "ok"
 	resp.Code = http.StatusOK
+  
 	if id == "" {
 		resp.Details = "no ID received"
 	} else {
