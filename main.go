@@ -15,7 +15,7 @@ import (
 )
 
 const ProductName = "golang-api-example"
-const ProductVersion = "0.0.3"
+const ProductVersion = "0.0.4"
 
 func main() {
 
@@ -48,8 +48,8 @@ func main() {
 
 	fmt.Printf("%s %s starting API server on %s\n", ProductName, ProductVersion, a.Listen)
 
- 	// Start the API
-	// If the application needs to do other work, Start() could be launched as a goroutine
+	// Start the API
+	// If the application needs to do other work, Start() could be launched as a goroutine to run in the background
 	err := a.Start()
 	if err != nil {
 		fmt.Println("Error starting API server: " + err.Error())
