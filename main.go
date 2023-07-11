@@ -15,7 +15,7 @@ import (
 )
 
 const ProductName = "golang-api-example"
-const ProductVersion = "0.0.4"
+const ProductVersion = "0.0.5"
 
 func main() {
 
@@ -25,7 +25,7 @@ func main() {
 	// Catch signals
 	signal.Notify(signals, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 
-	// method invoked upon seeing signal
+	// method invoked upon receiving signal
 	go func() {
 		for {
 			s := <-signals
@@ -42,9 +42,9 @@ func main() {
 	a.HTTPIdleTimeout = 60
 	a.MaxConcurrent = 100
 	a.DownFile = string(os.PathSeparator) + "down.txt"
-	a.TLS = false // disabled
-	a.TLSCertFile = "cert.pem"
-	a.TLSKeyFile = "key.pem"
+	// a.TLS = true
+	// a.TLSCertFile = "cert.pem"
+	// a.TLSKeyFile = "key.pem"
 
 	fmt.Printf("%s %s starting API server on %s\n", ProductName, ProductVersion, a.Listen)
 

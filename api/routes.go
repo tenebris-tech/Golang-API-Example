@@ -16,23 +16,25 @@ type Route struct {
 
 type Routes []Route
 
-var routes = Routes{
-	Route{
-		"health",
-		"GET",
-		"/health",
-		HealthHandler,
-	},
-	Route{
-		"ip",
-		"GET",
-		"/example",
-		ExampleHandler,
-	},
-	Route{
-		"ip",
-		"GET",
-		"/example/{id}",
-		ExampleHandler,
-	},
+func getRoutes() Routes {
+	return Routes{
+		Route{
+			"health",
+			"GET",
+			"/health",
+			HealthHandler,
+		},
+		Route{
+			"ip",
+			"GET",
+			"/example",
+			ExampleHandler,
+		},
+		Route{
+			"ip",
+			"GET",
+			"/example/{id}",
+			ExampleHandler,
+		},
+	}
 }

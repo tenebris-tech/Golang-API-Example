@@ -29,6 +29,7 @@ var downFile = ""
 
 // New returns a new Config struct with default values
 func New() Config {
+
 	// Return default configuration
 	return Config{
 		Listen:          "127.0.0.1:8080",
@@ -53,8 +54,9 @@ func (c *Config) Start() error {
 	router := c.newRouter()
 
 	// Add catch all and not found handler
-	router.PathPrefix("/").Handler(Logger(http.HandlerFunc(Handler404)))
-	router.NotFoundHandler = Logger(http.HandlerFunc(Handler404))
+	router.PathPrefix("/").Handler(Wrapper(http.HandlerFunc(Handler404)))
+	router.NotFoundHandler = Wrapper(http.HandlerFunc(Handler404))
+	router.MethodNotAllowedHandler = Wrapper(http.HandlerFunc(Handler405))
 
 	// Create server
 	s := &http.Server{
@@ -68,7 +70,6 @@ func (c *Config) Start() error {
 
 	// Add TLS configuration if option is enabled
 	if c.TLS {
-
 		if c.TLSCertFile == "" || c.TLSKeyFile == "" {
 			return errors.New("TLS cert or key file not specified")
 		}

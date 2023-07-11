@@ -15,20 +15,24 @@ import (
 // using netutil.LimitListener. If maxConcurrent is 0, bypass the limit.
 func (c *Config) listen(srv *http.Server) error {
 
+	// Get listen address, default to ":http"
 	addr := srv.Addr
 	if addr == "" {
 		addr = ":http"
 	}
 
+	// Create listener
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err
 	}
 
+	// If maxConcurrent is 0, bypass limit
 	if c.MaxConcurrent == 0 {
 		return c.serve(srv, listener)
 	}
 
+	// Create server with limited listener
 	limited := netutil.LimitListener(listener, c.MaxConcurrent)
 	return c.serve(srv, limited)
 }
