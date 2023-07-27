@@ -8,6 +8,9 @@ package api
 import (
 	"crypto/tls"
 	"errors"
+	"github.com/gorilla/mux"
+	"golang.org/x/net/netutil"
+	"net"
 	"net/http"
 	"time"
 )
@@ -22,6 +25,7 @@ type Config struct {
 	TLS             bool
 	TLSCertFile     string
 	TLSKeyFile      string
+	Debug           bool
 }
 
 // Store the down file in a global variable
@@ -41,6 +45,7 @@ func New() Config {
 		TLS:             false,
 		TLSCertFile:     "",
 		TLSKeyFile:      "",
+		Debug:           false,
 	}
 }
 
@@ -54,9 +59,9 @@ func (c *Config) Start() error {
 	router := c.newRouter()
 
 	// Add catch all and not found handler
-	router.PathPrefix("/").Handler(Wrapper(http.HandlerFunc(Handler404)))
-	router.NotFoundHandler = Wrapper(http.HandlerFunc(Handler404))
-	router.MethodNotAllowedHandler = Wrapper(http.HandlerFunc(Handler405))
+	router.PathPrefix("/").Handler(c.Wrapper(http.HandlerFunc(c.Handler404)))
+	router.NotFoundHandler = c.Wrapper(http.HandlerFunc(c.Handler404))
+	router.MethodNotAllowedHandler = c.Wrapper(http.HandlerFunc(c.Handler405))
 
 	// Create server
 	s := &http.Server{
@@ -94,4 +99,60 @@ func (c *Config) Start() error {
 		return err
 	}
 	return nil
+}
+
+// Create gorilla/mux router and load routes from route.go
+func (c *Config) newRouter() *mux.Router {
+	router := mux.NewRouter().StrictSlash(c.StrictSlash)
+
+	// Get routes from routes.go
+	routes := c.getRoutes()
+
+	// Iterate through routes
+	for _, route := range routes {
+
+		// Register the route, including our wrapper
+		router.
+			Methods(route.Method).
+			Path(route.Pattern).
+			Name(route.Name).
+			Handler(c.Wrapper(route.HandlerFunc))
+	}
+	return router
+}
+
+// listen is a replacement for ListenAndServe that implements a concurrent session limit
+// using netutil.LimitListener. If maxConcurrent is 0, no limit is imposed.
+func (c *Config) listen(srv *http.Server) error {
+
+	// Get listen address, default to ":http"
+	addr := srv.Addr
+	if addr == "" {
+		addr = ":http"
+	}
+
+	// Create listener
+	listener, err := net.Listen("tcp", addr)
+	if err != nil {
+		return err
+	}
+
+	// If maxConcurrent is 0, bypass limit
+	if c.MaxConcurrent == 0 {
+		return c.serve(srv, listener)
+	}
+
+	// Create server with limited listener
+	limited := netutil.LimitListener(listener, c.MaxConcurrent)
+	return c.serve(srv, limited)
+}
+
+// serve requests using the specified listener (limited or not) and TLS if configured
+func (c *Config) serve(srv *http.Server, l net.Listener) error {
+	if c.TLS {
+		// This will use the previously configured TLS information
+		return srv.ServeTLS(l, "", "")
+	} else {
+		return srv.Serve(l)
+	}
 }

@@ -15,7 +15,7 @@ import (
 // ExampleHandler accepts an optional 'id' variable and echos it back
 // This is an example of a handler that can receive a variable in the URL or not
 // Note that two routes are defined in routes.go, one with the variable and one without
-func ExampleHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Config) ExampleHandler(w http.ResponseWriter, r *http.Request) {
 	var resp Response
 
 	// Get parameter
@@ -25,7 +25,7 @@ func ExampleHandler(w http.ResponseWriter, r *http.Request) {
 	// Create example response
 	resp.Status = "ok"
 	resp.Code = http.StatusOK
-  
+
 	if id == "" {
 		resp.Details = "no ID received"
 	} else {
@@ -33,5 +33,5 @@ func ExampleHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Send Response
-	respond(w, resp, "example")
+	c.respond(w, resp, "example")
 }

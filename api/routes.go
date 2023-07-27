@@ -16,25 +16,25 @@ type Route struct {
 
 type Routes []Route
 
-func getRoutes() Routes {
+func (c *Config) getRoutes() Routes {
 	return Routes{
 		Route{
 			"health",
 			"GET",
 			"/health",
-			HealthHandler,
+			c.HealthHandler,
 		},
 		Route{
 			"ip",
 			"GET",
 			"/example",
-			ExampleHandler,
+			c.ExampleHandler,
 		},
 		Route{
 			"ip",
 			"GET",
 			"/example/{id}",
-			ExampleHandler,
+			c.ExampleHandler,
 		},
 	}
 }

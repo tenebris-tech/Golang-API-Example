@@ -15,7 +15,7 @@ import (
 )
 
 const ProductName = "golang-api-example"
-const ProductVersion = "0.0.6"
+const ProductVersion = "0.0.7"
 
 func main() {
 
@@ -42,6 +42,7 @@ func main() {
 	a.HTTPIdleTimeout = 60
 	a.MaxConcurrent = 100
 	a.DownFile = string(os.PathSeparator) + "down.txt"
+	a.Debug = true
 	// a.TLS = true
 	// a.TLSCertFile = "cert.pem"
 	// a.TLSKeyFile = "key.pem"

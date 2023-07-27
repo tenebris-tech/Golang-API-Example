@@ -34,12 +34,12 @@ func (w *statusWriter) Write(b []byte) (int, error) {
 
 // Wrapper returns a HandlerFunc that implements a custom logger. This wrapper provides consistent
 // logging and HTTP headers
-func Wrapper(destinationHandler http.Handler) http.Handler {
+func (c *Config) Wrapper(destinationHandler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		// Get the start time and source IP
 		startTime := time.Now()
-		src := getIP(r)
+		src := c.getIP(r)
 
 		// Set headers to prevent caching
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")

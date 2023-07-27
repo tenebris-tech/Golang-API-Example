@@ -13,7 +13,7 @@ import (
 // HealthHandler implements a health check for load balancers, etc.
 //
 //goland:noinspection GoUnusedParameter
-func HealthHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Config) HealthHandler(w http.ResponseWriter, r *http.Request) {
 	var resp Response
 
 	// Check for presence of the file that indicates the server is down
@@ -30,5 +30,5 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Send Response
-	respond(w, resp, "health")
+	c.respond(w, resp, "health")
 }

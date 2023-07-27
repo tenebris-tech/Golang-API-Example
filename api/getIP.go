@@ -12,7 +12,7 @@ import (
 
 // getIP gets a requests IP address by reading the forwarded-for
 // header (for proxies or load balancers) and falls back to use the remote address.
-func getIP(r *http.Request) string {
+func (c *Config) getIP(r *http.Request) string {
 	var s = ""
 	forwarded := r.Header.Get("X-FORWARDED-FOR")
 	if forwarded != "" {

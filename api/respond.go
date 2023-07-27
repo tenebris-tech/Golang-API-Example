@@ -21,7 +21,7 @@ type Response struct {
 
 // respond sends an HTTP response and logs any JSON encoding errors
 // This approach allows headers to be set consistently
-func respond(w http.ResponseWriter, resp Response, caller string) {
+func (c *Config) respond(w http.ResponseWriter, resp Response, caller string) {
 
 	// Set reply headers
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
