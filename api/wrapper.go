@@ -32,8 +32,8 @@ func (w *statusWriter) Write(b []byte) (int, error) {
 	return n, err
 }
 
-// Wrapper implements a custom logger by wrapping the handler
-// It also sets headers on every request to prevent caching
+// Wrapper returns a HandlerFunc that implements a custom logger. This wrapper provides consistent
+// logging and HTTP headers
 func Wrapper(destinationHandler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 

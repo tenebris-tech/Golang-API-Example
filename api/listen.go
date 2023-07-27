@@ -11,8 +11,8 @@ import (
 	"net/http"
 )
 
-// Replacement for ListenAndServe that implements concurrent session limit
-// using netutil.LimitListener. If maxConcurrent is 0, bypass the limit.
+// listen is a replacement for ListenAndServe that implements a concurrent session limit
+// using netutil.LimitListener. If maxConcurrent is 0, no limit is imposed.
 func (c *Config) listen(srv *http.Server) error {
 
 	// Get listen address, default to ":http"
@@ -37,7 +37,7 @@ func (c *Config) listen(srv *http.Server) error {
 	return c.serve(srv, limited)
 }
 
-// Start server
+// Start server using the specified listener (limited or not) and TLS if configured
 func (c *Config) serve(srv *http.Server, l net.Listener) error {
 	if c.TLS {
 		// This will use the previously configured TLS information
