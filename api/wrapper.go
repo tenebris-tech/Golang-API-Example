@@ -6,7 +6,7 @@
 package api
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -56,13 +56,7 @@ func (c *Config) Wrapper(destinationHandler http.Handler) http.Handler {
 		// Remove parameters from URI to avoid logging confidential information
 		uri := strings.Split(r.RequestURI, "?")[0]
 
-		// Add code here to send the log event somewhere other than stdout
-		fmt.Printf("%s %s %s %d %f\n", src, r.Method, uri, sw.status, duration.Seconds())
+		// Log the event
+		log.Printf("%s %s %s %d %f", src, r.Method, uri, sw.status, duration.Seconds())
 	})
-}
-
-// JSONEncodeError is called if a JSON encode error occurs
-func JSONEncodeError(hName string, err error) {
-	// Add code here to send the log event somewhere other than stdout
-	fmt.Printf("JSON encode error in %s handler: %s", hName, err.Error())
 }

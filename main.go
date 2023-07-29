@@ -6,7 +6,9 @@
 package main
 
 import (
-	"fmt"
+	"errors"
+	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -19,6 +21,11 @@ const ProductVersion = "0.0.7"
 
 func main() {
 
+	// Create the API object
+	// This is done first so that the API object can be used to gracefully
+	// shut down the server when a signal is received
+	a := api.New()
+
 	// Setup signal catching
 	signals := make(chan os.Signal, 1)
 
@@ -29,14 +36,18 @@ func main() {
 	go func() {
 		for {
 			s := <-signals
-			fmt.Printf("Received signal: %v\n", s)
-			AppCleanup()
+			log.Printf("Received signal: %v", s)
+			log.Printf("Asking the API server to stop")
+			err := a.Stop()
+			if err != nil {
+				log.Printf("Error stopping the API server: %s", err.Error())
+				log.Printf("Forcing exit")
+				cleanup()
+			}
 		}
 	}()
 
-	// Create the API object and set parameters
-	a := api.New()
-
+	// Set API parameters
 	a.Listen = "127.0.0.1:8080"
 	a.HTTPTimeout = 30
 	a.HTTPIdleTimeout = 60
@@ -47,22 +58,29 @@ func main() {
 	// a.TLSCertFile = "cert.pem"
 	// a.TLSKeyFile = "key.pem"
 
-	fmt.Printf("%s %s starting API server on %s\n", ProductName, ProductVersion, a.Listen)
+	log.Printf("%s %s starting API server on %s", ProductName, ProductVersion, a.Listen)
 
 	// Start the API
 	// If the application needs to do other work, Start() could be launched as a goroutine to run in the background
 	err := a.Start()
 	if err != nil {
-		fmt.Println("Error starting API server: " + err.Error())
+		// Server returns an error even if it shut down gracefully
+		// If the error is not a server closed error, return it
+		if !errors.Is(err, http.ErrServerClosed) {
+			log.Printf("Error starting the API server: %s", err.Error())
+		} else {
+			log.Printf("API server shut down gracefully")
+		}
 	}
+	cleanup()
 }
 
-// AppCleanup provides a graceful exit point
-func AppCleanup() {
+// cleanup is the graceful exit point
+func cleanup() {
 
-	// Log exit
-	fmt.Println("API server stopping")
+	// Perform any cleanup here
 
 	// Exit
+	log.Printf("%s %s exiting", ProductName, ProductVersion)
 	os.Exit(0)
 }

@@ -6,8 +6,10 @@
 package api
 
 import (
+	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"github.com/gorilla/mux"
 	"golang.org/x/net/netutil"
 	"net"
@@ -26,6 +28,7 @@ type Config struct {
 	TLSCertFile     string
 	TLSKeyFile      string
 	Debug           bool
+	server          *http.Server
 }
 
 // Store the down file in a global variable
@@ -94,9 +97,17 @@ func (c *Config) Start() error {
 	}
 
 	// Start our customized server
-	err := c.listen(s)
-	if err != nil {
-		return err
+	return c.listen(s)
+}
+
+func (c *Config) Stop() error {
+	// Tell the server it has 10 seconds to finish
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Shutdown the server
+	if err := c.server.Shutdown(ctx); err != nil {
+		return errors.New(fmt.Sprintf("server shutdown error: %s", err.Error()))
 	}
 	return nil
 }
@@ -125,6 +136,9 @@ func (c *Config) newRouter() *mux.Router {
 // using netutil.LimitListener. If maxConcurrent is 0, no limit is imposed.
 func (c *Config) listen(srv *http.Server) error {
 
+	// Store the server to allow for a graceful shutdown
+	c.server = srv
+
 	// Get listen address, default to ":http"
 	addr := srv.Addr
 	if addr == "" {
@@ -132,27 +146,24 @@ func (c *Config) listen(srv *http.Server) error {
 	}
 
 	// Create listener
-	listener, err := net.Listen("tcp", addr)
+	rawListener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err
 	}
 
-	// If maxConcurrent is 0, bypass limit
-	if c.MaxConcurrent == 0 {
-		return c.serve(srv, listener)
+	// If maxConcurrent > 0 wrap the listener with a limited listener
+	var listener net.Listener
+	if c.MaxConcurrent > 0 {
+		listener = netutil.LimitListener(rawListener, c.MaxConcurrent)
+	} else {
+		listener = rawListener
 	}
 
-	// Create server with limited listener
-	limited := netutil.LimitListener(listener, c.MaxConcurrent)
-	return c.serve(srv, limited)
-}
-
-// serve requests using the specified listener (limited or not) and TLS if configured
-func (c *Config) serve(srv *http.Server, l net.Listener) error {
+	// Call TLS or non-TLS listener
 	if c.TLS {
 		// This will use the previously configured TLS information
-		return srv.ServeTLS(l, "", "")
+		return srv.ServeTLS(listener, "", "")
 	} else {
-		return srv.Serve(l)
+		return srv.Serve(listener)
 	}
 }

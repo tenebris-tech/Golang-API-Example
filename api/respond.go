@@ -7,6 +7,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -34,4 +35,9 @@ func (c *Config) respond(w http.ResponseWriter, resp Response, caller string) {
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		JSONEncodeError(caller, err)
 	}
+}
+
+// JSONEncodeError is called if a JSON encode error occurs
+func JSONEncodeError(hName string, err error) {
+	log.Printf("JSON encode error in %s handler: %s", hName, err.Error())
 }
