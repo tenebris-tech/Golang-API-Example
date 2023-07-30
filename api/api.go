@@ -28,6 +28,7 @@ type Config struct {
 	TLSCertFile     string
 	TLSKeyFile      string
 	Debug           bool
+	running         bool
 	server          *http.Server
 }
 
@@ -101,6 +102,12 @@ func (c *Config) Start() error {
 }
 
 func (c *Config) Stop() error {
+
+	// First check if the API is running
+	if !c.running {
+		return nil
+	}
+
 	// Tell the server it has 10 seconds to finish
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -109,6 +116,9 @@ func (c *Config) Stop() error {
 	if err := c.server.Shutdown(ctx); err != nil {
 		return errors.New(fmt.Sprintf("server shutdown error: %s", err.Error()))
 	}
+
+	// Shutdown was successful
+	c.running = false
 	return nil
 }
 
@@ -138,6 +148,9 @@ func (c *Config) listen(srv *http.Server) error {
 
 	// Store the server to allow for a graceful shutdown
 	c.server = srv
+
+	// Set the running flag
+	c.running = true
 
 	// Get listen address, default to ":http"
 	addr := srv.Addr
