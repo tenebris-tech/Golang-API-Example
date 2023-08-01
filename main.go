@@ -17,7 +17,7 @@ import (
 )
 
 const ProductName = "golang-api-example"
-const ProductVersion = "0.0.7"
+const ProductVersion = "0.0.8"
 
 func main() {
 
