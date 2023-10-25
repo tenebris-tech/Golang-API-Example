@@ -18,17 +18,18 @@ import (
 )
 
 type Config struct {
-	Listen          string
-	HTTPTimeout     int
-	HTTPIdleTimeout int
-	MaxConcurrent   int
-	DownFile        string
-	StrictSlash     bool
-	TLS             bool
-	TLSCertFile     string
-	TLSKeyFile      string
-	Debug           bool
-	server          *http.Server
+	Listen           string
+	HTTPTimeout      int
+	HTTPIdleTimeout  int
+	MaxConcurrent    int
+	DownFile         string
+	StrictSlash      bool
+	TLS              bool
+	TLSCertFile      string
+	TLSKeyFile       string
+	TLSStrongCiphers bool
+	Debug            bool
+	server           *http.Server
 }
 
 // Store the down file in a global variable
@@ -39,16 +40,17 @@ func New() Config {
 
 	// Return default configuration
 	return Config{
-		Listen:          "127.0.0.1:8080",
-		HTTPTimeout:     60,
-		HTTPIdleTimeout: 60,
-		MaxConcurrent:   100,
-		DownFile:        "",
-		StrictSlash:     true,
-		TLS:             false,
-		TLSCertFile:     "",
-		TLSKeyFile:      "",
-		Debug:           false,
+		Listen:           "127.0.0.1:8080",
+		HTTPTimeout:      60,
+		HTTPIdleTimeout:  60,
+		MaxConcurrent:    100,
+		DownFile:         "",
+		StrictSlash:      true,
+		TLS:              false,
+		TLSCertFile:      "",
+		TLSKeyFile:       "",
+		TLSStrongCiphers: true,
+		Debug:            false,
 	}
 }
 
@@ -91,6 +93,17 @@ func (c *Config) Start() error {
 		// Create the TLS configuration
 		tlsConfig := tls.Config{Certificates: []tls.Certificate{cert}}
 		tlsConfig.MinVersion = tls.VersionTLS12
+
+		if c.TLSStrongCiphers {
+			tlsConfig.CipherSuites = []uint16{
+				tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+				tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+				tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+			}
+		}
 
 		// Add to the HTTP server config
 		s.TLSConfig = &tlsConfig

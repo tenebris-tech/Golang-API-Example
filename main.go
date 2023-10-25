@@ -17,7 +17,7 @@ import (
 )
 
 const ProductName = "golang-api-example"
-const ProductVersion = "0.0.8"
+const ProductVersion = "0.0.9"
 
 func main() {
 
@@ -57,6 +57,7 @@ func main() {
 	// a.TLS = true
 	// a.TLSCertFile = "cert.pem"
 	// a.TLSKeyFile = "key.pem"
+	// a.TLSStrongCiphers = true
 
 	log.Printf("%s %s starting API server on %s", ProductName, ProductVersion, a.Listen)
 
