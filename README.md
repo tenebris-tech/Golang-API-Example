@@ -1,6 +1,6 @@
 # Golang API Example
 
-Copyright (c) 2021-2023 Tenebris Technologies Inc.
+Copyright (c) 2021-2024 Tenebris Technologies Inc.
 
 See the LICENSE file for further information.
 
