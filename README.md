@@ -4,6 +4,9 @@ Copyright (c) 2021-2024 Tenebris Technologies Inc.
 
 See the LICENSE file for further information.
 
+NOTE: If you are looking for a module to include in your application to simplify creating an HTTP API, please
+see github.com/tenebris-tech/easysrv. It is a work in progress, but seeks to eliminate a lot of the complexity.
+
 This is an example of how to implement a production HTTP/HTTPS server in Golang using github.com/gorilla/mux 
 and limit the number of concurrent requests.
 
